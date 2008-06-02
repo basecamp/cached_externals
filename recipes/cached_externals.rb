@@ -1,4 +1,6 @@
 set(:external_modules) do
+  require 'yaml'
+
   modules = YAML.load_file("config/externals.yml") rescue {}
   modules.each do |path, options|
     strings = options.select { |k, v| String === k }
@@ -23,6 +25,8 @@ namespace :externals do
     machines under [shared_path]/externals.
   DESC
   task :setup, :except => { :no_release => true } do
+    require 'capistrano/recipes/deploy/scm'
+
     external_modules.each do |path, options|
       puts "configuring #{path}"
       scm = Capistrano::Deploy::SCM.new(options[:type], options)
