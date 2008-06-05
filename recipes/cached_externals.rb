@@ -8,8 +8,6 @@ set(:external_modules) do
   end
 end
 
-set :stage, nil
-
 desc "Indicate that externals should be applied locally. See externals:setup."
 task :local do
   set :stage, :local
@@ -32,7 +30,7 @@ namespace :externals do
       scm = Capistrano::Deploy::SCM.new(options[:type], options)
       revision = scm.query_revision(options[:revision]) { |cmd| `#{cmd}` }
 
-      if stage == :local
+      if exists?(:stage) && stage == :local
         FileUtils.rm_rf(path)
         shared = File.expand_path(File.join("../shared/externals", path))
         FileUtils.mkdir_p(shared)
