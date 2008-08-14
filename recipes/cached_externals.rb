@@ -45,7 +45,7 @@ namespace :externals do
       else
         shared = File.join(shared_path, "externals", path)
         destination = File.join(shared, revision)
-        run "rm -rf #{latest_release}/#{path} && mkdir -p #{shared} && if [ ! -d #{destination} ]; then #{scm.checkout(revision, destination)} || rm -rf #{destination}; fi && ln -nsf #{destination} #{latest_release}/#{path}"
+        run "rm -rf #{latest_release}/#{path} && mkdir -p #{shared} && if [ ! -d #{destination} ]; then (#{scm.checkout(revision, destination)}) || rm -rf #{destination}; fi && ln -nsf #{destination} #{latest_release}/#{path}"
       end
     end
   end
