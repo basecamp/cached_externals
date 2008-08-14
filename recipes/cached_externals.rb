@@ -35,7 +35,12 @@ namespace :externals do
         shared = File.expand_path(File.join("../shared/externals", path))
         FileUtils.mkdir_p(shared)
         destination = File.join(shared, revision)
-        system(scm.checkout(revision, destination)) if !File.exists?(destination)
+        if !File.exists?(destination)
+          unless system(scm.checkout(revision, destination))
+            FileUtils.rm_rf(destination) if File.exists?(destination)
+            raise "Error checking out #{revision} to #{destination}"
+          end
+        end
         FileUtils.ln_s(destination, path)
       else
         shared = File.join(shared_path, "externals", path)
