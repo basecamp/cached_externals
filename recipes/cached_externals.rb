@@ -51,4 +51,11 @@ namespace :externals do
   end
 end
 
-after "deploy:update_code", "externals:setup"
+# Need to do this before finalize_update, instead of after update_code,
+# because finalize_update tries to do a touch of all assets, and some
+# assets might be symlinks to files in plugins that have been externalized.
+# Updating those externals after finalize_update means that the plugins
+# haven't been set up yet when the touch occurs, causing the touch to
+# fail and leaving some assets temporally out of sync, potentially, with
+# the other servers.
+before "deploy:finalize_update", "externals:setup"
