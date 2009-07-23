@@ -36,6 +36,7 @@ namespace :externals do
     machines under [shared_path]/externals.
   DESC
   task :setup, :except => { :no_release => true } do
+    require 'fileutils'
     require 'capistrano/recipes/deploy/scm'
 
     external_modules.each do |path, options|
