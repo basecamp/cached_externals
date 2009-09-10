@@ -65,7 +65,13 @@ namespace :externals do
     external_modules.each do |path, options|
       puts "configuring #{path}"
       scm = Capistrano::Deploy::SCM.new(options[:type], options)
-      revision = scm.query_revision(options[:revision]) { |cmd| `#{cmd}` }
+      revision =
+        begin
+          scm.query_revision(options[:revision]) { |cmd| `#{cmd}` }
+        rescue => scm_error
+          $stderr.puts scm_error
+          next
+        end
 
       if exists?(:stage) && stage == :local
         FileUtils.rm_rf(path)
