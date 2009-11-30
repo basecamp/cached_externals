@@ -9,12 +9,29 @@
 
 # The :external_modules variable is used internally to load and contain the
 # contents of the config/externals.yml file. Although you _could_ set the
-# variable yourself (to bypas the need for a config/externals.yml file, for
+# variable yourself (to bypass the need for a config/externals.yml file, for
 # instance), you'll rarely (if ever) want to.
+#
+# If ONLY_MODS is set to a comma-delimited string, you can specify which
+# modules to process explicitly.
+#
+# If EXCEPT_MODS is set to a comma-delimited string, the specified modules
+# will be ignored.
 set(:external_modules) do
   require 'yaml'
 
   modules = YAML.load_file("config/externals.yml") rescue {}
+
+  if ENV['ONLY_MODS']
+    patterns = ENV['ONLY_MODS'].split(/,/).map { |s| Regexp.new(s) }
+    modules = Hash[modules.select { |k,v| patterns.any? { |p| k.to_s =~ p } }]
+  end
+
+  if ENV['EXCEPT_MODS']
+    patterns = ENV['EXCEPT_MODS'].split(/,/).map { |s| Regexp.new(s) }
+    modules = Hash[modules.reject { |k,v| patterns.any? { |p| k.to_s =~ p } }]
+  end
+
   modules.each do |path, options|
     strings = options.select { |k, v| String === k }
     raise ArgumentError, "the externals.yml file must use symbols for the option keys (found #{strings.inspect} under #{path})" if strings.any?
@@ -34,6 +51,12 @@ namespace :externals do
     then these will be created in a "../shared/externals" directory relative
     to the project root. Otherwise, these will be created on the remote
     machines under [shared_path]/externals.
+
+    Specify ONLY_MODS to process only a subset of the defined modules, and
+    EXCEPT_MODS to ignore certain modules for processing.
+
+      $ cap local externals:setup ONLY_MODS=rails,solr
+      $ cap local externals:setup EXCEPT_MODS=rails,solr
   DESC
   task :setup, :except => { :no_release => true } do
     require 'fileutils'
