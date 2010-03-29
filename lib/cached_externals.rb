@@ -92,7 +92,7 @@ Capistrano::Configuration.instance.load do
     task :install_hooks, :except => { :no_release => true } do
       require 'fileutils'
 
-      Dir[File.expand_path('../../script/git-hooks', __FILE__) + '/*'].each do |hook|
+      Dir["#{File.dirname(__FILE__)}/cached_externals/git-hooks/*"].each do |hook|
         FileUtils.cp hook, ".git/hooks"
         FileUtils.chmod 0755, ".git/hooks/#{File.basename(hook)}"
       end
