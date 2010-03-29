@@ -87,6 +87,16 @@ Capistrano::Configuration.instance.load do
         end
       end
     end
+
+    desc "Install some git hooks for updating cached externals"
+    task :install_hooks, :except => { :no_release => true } do
+      require 'fileutils'
+
+      Dir[File.expand_path('../../script/git-hooks', __FILE__) + '/*'].each do |hook|
+        FileUtils.cp hook, ".git/hooks"
+        FileUtils.chmod 0755, ".git/hooks/#{File.basename(hook)}"
+      end
+    end
   end
 
   # Need to do this before finalize_update, instead of after update_code,
