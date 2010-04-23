@@ -92,7 +92,7 @@ def process_external_gem(path, shared_dir, options)
       "ln -nsf #{destination} #{latest_release}/#{path}"
     ]
 
-    run(command.join(" && "))
+    run(commands.join(" && "))
   end
 end
 
