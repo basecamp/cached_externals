@@ -86,8 +86,7 @@ def process_external_gem(path, shared_dir, options)
     FileUtils.ln_s(destination, path)
   else
     commands = [
-      "mkdir -p #{shared_gems_dir} #{base}",
-      install_command,
+      "mkdir -p #{shared_gems_dir} #{latest_release}/#{base}",
       "if [ ! -d #{destination} ]; then (#{install_command}) || (rm -rf #{destination} && false); fi",
       "ln -nsf #{destination} #{latest_release}/#{path}"
     ]
