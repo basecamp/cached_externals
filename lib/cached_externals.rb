@@ -97,7 +97,8 @@ Capistrano::Configuration.instance.load do
   end
 
   def process_external_scm(path, shared_dir, options)
-    if options[:type] = "github_https"
+    puts options
+    if options[:type] == "github_https"
       options[:type] = "git"
       begin
         options[:scm_user] = ENV.fetch('GITHUB_TOKEN')
