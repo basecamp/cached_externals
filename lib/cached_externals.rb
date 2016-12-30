@@ -97,6 +97,17 @@ Capistrano::Configuration.instance.load do
   end
 
   def process_external_scm(path, shared_dir, options)
+    if options[:type] = "github_https"
+      options[:type] = "git"
+      begin
+        options[:scm_username] = ENV.fetch('GITHUB_TOKEN')
+        options[:scm_password] = "x-oauth-basic"
+      rescue 
+        $stderr.puts "ERROR: GITHUB_TOKEN environment variable is not set."
+        exit!
+      end
+    end
+        
     scm = Capistrano::Deploy::SCM.new(options[:type], options)
     revision =
       begin
