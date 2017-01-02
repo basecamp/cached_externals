@@ -103,7 +103,7 @@ Capistrano::Configuration.instance.load do
       begin
         options[:scm_user] = ENV.fetch('GITHUB_TOKEN')
         options[:scm_password] = "x-oauth-basic"
-        options[:repository] = options[:repository].gsub("github.com", "#{options[:scm_user]}:#{options[:scm_password]}@github.com")
+        options[:repository] = options[:repository].gsub("github.com", "#{options[:scm_user]}@github.com")
       rescue 
         $stderr.puts "ERROR: GITHUB_TOKEN environment variable is not set."
         exit!
